@@ -1,0 +1,2 @@
+put bin/dspblit.tos
+exec -n dspblit.tos
