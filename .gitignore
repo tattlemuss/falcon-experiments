@@ -1,0 +1,6 @@
+dsp_blitter/bin/*
+dsp_blitter/bin
+dsp_blitter/tos404.img
+
+# Eclipse
+.project
