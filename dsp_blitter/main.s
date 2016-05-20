@@ -109,7 +109,7 @@ fail:
 ;------------------------------------------------------------------------------
 	
 dsp_data:	
-	incbin	dsp.p56
+	incbin	bin/dsp.p56
 dsp_data_end:
 
 dsp_data_size	equ		(dsp_data_end-dsp_data)/3

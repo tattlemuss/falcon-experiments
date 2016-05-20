@@ -20,7 +20,7 @@ bin/%.obj: %.s
 	${VASM} -Felf -m68030 -spaces $< -o $@
 
 # Generate a P56 file
-%.p56: %.asm
+bin/%.p56: %.asm
 	${ASM56K} $< -p $@
 
 ${OUT_PATH}: $(ASM_OBJS) $(DSP_OBJ)
@@ -34,5 +34,5 @@ clean:
 hatari: all
 	hatari --machine falcon --dsp emu --blitter y --tos tos404.img $(OUT_PATH)
 
-main.obj :	dsp.p56
+bin/main.obj :	bin/dsp.p56
 
