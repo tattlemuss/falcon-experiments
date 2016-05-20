@@ -123,4 +123,5 @@ fake_src:   dc.w    $000
 screenbase	ds.l	1
                 
 			ds.b	256
-screen		ds.b	320*200*2
+screen		ds.b	320*200
+

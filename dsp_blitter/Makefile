@@ -20,17 +20,17 @@ dirs:
 	mkdir -p bin
 
 bin/%.obj: %.s
-	${VASM} -Faout -m68030 -spaces $< -o $@
+	${VASM} -quiet -Faout -m68030 -spaces $< -o $@
 
 bin/%.obj: %.c
-	${CC} -c $< -o $@
+	${CC} -Os -c $< -o $@
 
 # Generate a P56 file
 bin/%.p56: %.asm
 	${ASM56K} $< -p $@
 
 ${OUT_PATH}: $(ASM_OBJS) $(C_OBJS)
-	${LD} $(C_OBJS) $(ASM_OBJS) -o $@
+	${LD} -nostdlib $(C_OBJS) $(ASM_OBJS) -o $@
 #-b a.out-mintprg
 
 clean:

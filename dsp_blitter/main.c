@@ -10,17 +10,22 @@ int main(int argc, char** argv)
 	int32_t ret;
 	
 	ret = Supexec(dspinit);
-	printf("blitter test\n");
-	printf("Init code: %x\n", ret);
-	getchar();
+	//printf("blitter test\n");
+	//printf("Init code: %x\n", ret);
+	//getchar();
 	
-	ret = Supexec(dspblit);
+	while (1)
+	{
+		ret = Supexec(dspblit);
+	}
 	
-	printf("Return code: %x\n", ret);
-	getchar();
+	//printf("Return code: %x\n", ret);
+	//getchar();
 	return 0;
 }
 
-void fail()
+int __main()
 {
+	return 0;
 }
+
