@@ -23,15 +23,14 @@ bin/%.obj: %.s
 	${VASM} -quiet -Faout -m68030 -spaces $< -o $@
 
 bin/%.obj: %.c
-	${CC} -Os -c $< -o $@
+	${CC} -Os -g -c $< -o $@
 
 # Generate a P56 file
 bin/%.p56: %.asm
 	${ASM56K} $< -p $@
 
 ${OUT_PATH}: $(ASM_OBJS) $(C_OBJS)
-	${LD} -nostdlib $(C_OBJS) $(ASM_OBJS) -o $@
-#-b a.out-mintprg
+	${LD} -nostdlib -fno-exceptions -fno-rtti -fomit-frame-pointer $(C_OBJS) $(ASM_OBJS) -o $@
 
 clean:
 	rm -rf ${OUT_DIR}/*
