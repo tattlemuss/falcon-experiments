@@ -1,6 +1,8 @@
         include    "hardware.i"
 
-main:
+		public		_dspblit
+		
+_dspblit:
 	clr.l	-(a7)
 	move.w	#$20,-(a7)
 	trap	#1

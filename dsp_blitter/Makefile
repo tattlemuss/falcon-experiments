@@ -2,13 +2,16 @@ SRC_PATH=.
 OUT_DIR=./bin
 OUT_PATH=$(OUT_DIR)/dspblit.tos
 
-ASM_OBJS=bin/main.obj
+ASM_OBJS=bin/main.obj bin/dspblit.obj
 #DSP_OBJ=dsp.lod
 
 TEST_BIN= $(TEST_SRC:${SRC_PATH}/%.c=${OUT_PATH}/%)
 VASM=vasmm68k_mot
 VLINK=vlink
 ASM56K=asm56k
+CC=m68k-atari-mint-gcc
+LD=m68k-atari-mint-gcc
+
 
 .PHONY: all
 all: dirs $(OUT_PATH)
@@ -17,14 +20,18 @@ dirs:
 	mkdir -p bin
 
 bin/%.obj: %.s
-	${VASM} -Felf -m68030 -spaces $< -o $@
+	${VASM} -Faout -m68030 -spaces $< -o $@
+
+bin/%.obj: %.c
+	${CC} -c $< -o $@
 
 # Generate a P56 file
 bin/%.p56: %.asm
 	${ASM56K} $< -p $@
 
-${OUT_PATH}: $(ASM_OBJS) $(DSP_OBJ)
-	${VLINK} $(ASM_OBJS) -b ataritos -o $@
+${OUT_PATH}: $(ASM_OBJS) $(C_OBJS)
+	${LD} $(C_OBJS) $(ASM_OBJS) -o $@
+#-b a.out-mintprg
 
 clean:
 	rm -rf ${OUT_DIR}/*
