@@ -1,18 +1,13 @@
         include    "hardware.i"
 
+		public		_dspinit
 		public		_dspblit
-		
-_dspblit:
-	clr.l	-(a7)
-	move.w	#$20,-(a7)
-	trap	#1
-	addq.l	#6,a7
-	
-	 	
+
+_dspinit:
 	;DSP lock
-	move.w    #104,-(sp)   ; Offset 0
-	trap      #14          ; Call XBIOS
-	addq.l    #2,sp        ; Correct stack
+	move.w	#104,-(sp)   ; Offset 0
+	trap	#14          ; Call XBIOS
+	addq.l	#2,sp        ; Correct stack
 	tst.w	d0
 	;bmi		fail			; This seems to fail in Hatari
 
@@ -20,7 +15,6 @@ _dspblit:
 	move.w	#1,-(sp)  	   ; Offset 10, "ability"
 	move.l	#dsp_data_size,-(sp) ; Offset  6
 	pea		dsp_data        ; Offset  2
-;	move.w	#110,-(sp)     ; Offset  0
 	move.w	#109,-(sp)     ; Offset  0
 	trap	#14            ; Call XBIOS
 	lea		$C(sp),sp      ; Correct stack
@@ -33,7 +27,7 @@ _dspblit:
 	; Calc screen address
 	move.l	#screen,d0
 	and.l	#$ffffff00,d0
-	move.l	d0,-(a7)
+	move.l	d0,screenbase
 	
 	; Set screen address and res
 	move.w  #VSETMODE_TRUCOLOR,-(sp)   ; Offset 12
@@ -43,31 +37,35 @@ _dspblit:
 	move.w  #5,-(sp)     ; Offset  0
 	trap    #14          ; Call XBIOS
 	lea     14(sp),sp    ; Correct stack
-	move.l	(a7)+,a0	; a0 - screen base
 	tst.w	d0
 	bmi		fail
+	moveq	#0,d0
+	rts
+		
+_dspblit:
 
 loop:
-	lea	$ffffA206.w,a1	            ;a1 = DSP host post
-        add.w   #$111,fake_src
+	move.l	screenbase,a0
+	lea		$ffffA206.w,a1	            ;a1 = DSP host post
+	add.w   #$111,fake_src
 
 XCOUNT  equ     256
 YCOUNT  equ     128
 
-        if     1
+    if     1
 	move.l	a0,a2
-        move.w	#YCOUNT-1,d0
+    move.w	#YCOUNT-1,d0
 .yloop:
-        move.w	#XCOUNT-1,d1
+    move.w	#XCOUNT-1,d1
 .xloop:
 	move.w	(a1),(a2)+
 	dbf     d1,.xloop
 	lea     (320*2)-(XCOUNT*2)(a2),a2
 	dbf     d0,.yloop
         
-        else
+	else
         
-        move.w	#2,BLT_DST_INC_X.w
+    move.w	#2,BLT_DST_INC_X.w
 	move.w	#(320*2)-(XCOUNT*2)+2,BLT_DST_INC_Y.w
 	move.l  a0,BLT_DST_ADDR_L.w        ;set destination
 
@@ -90,22 +88,23 @@ YCOUNT  equ     128
 
 	; Kick it
 	moveq	#7,d2
-        bset.b  d2,BLT_MISC_1.w
+	bset.b  d2,BLT_MISC_1.w
 
-.rs     btst.b  d2,BLT_MISC_1.w
-        bne.s	.rs
+.rs:
+	btst.b  d2,BLT_MISC_1.w
+    bne.s	.rs
 
-        endif
-        
-;	not.l   $ffff9800.w
-        cmp.b   #$39,$fffffc02.w
+    endif
+
+	cmp.b   #$39,$fffffc02.w
 	bne.s	loop
 
-;------------------------------------------------------------------------------
+	move.l	#$1111,d0
+	rts
+
 fail:
-	clr.w	-(a7)
-	trap	#1
-	
+	moveq	#-1,d0
+	rts		
 ;------------------------------------------------------------------------------
 	section	data
 ;------------------------------------------------------------------------------
@@ -113,7 +112,6 @@ fail:
 dsp_data:	
 	incbin	bin/dsp.p56
 dsp_data_end:
-
 dsp_data_size	equ		(dsp_data_end-dsp_data)/3
 
             even
@@ -122,8 +120,7 @@ fake_src:   dc.w    $000
 ;------------------------------------------------------------------------------
 	section	bss
 ;------------------------------------------------------------------------------
-                ds.b    32000
+screenbase	ds.l	1
                 
-                ds.b	256
+			ds.b	256
 screen		ds.b	320*200*2
-
