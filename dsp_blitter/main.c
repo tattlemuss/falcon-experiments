@@ -4,19 +4,24 @@
 
 extern int32_t dspinit();
 extern int32_t dspblit();
+extern int32_t screenbase;		// Base screen address
+
 
 int main(int argc, char** argv)
 {
 	int32_t ret;
+	printf("blitter test\n");
+	getchar();
 	
 	ret = Supexec(dspinit);
-	//printf("blitter test\n");
 	//printf("Init code: %x\n", ret);
-	//getchar();
 	
 	while (1)
 	{
 		ret = Supexec(dspblit);
+		
+		ret = save_file((void*)screenbase, 320*200*2, "SCREEN.DAT");
+		printf("Return code: %x\n", ret);
 	}
 	
 	//printf("Return code: %x\n", ret);
@@ -24,8 +29,23 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-int __main()
+int save_file(void* base, int32_t size, const char* pFilename)
 {
-	return 0;
+	printf("%p\n", base);
+	
+	int16_t handle;
+	int16_t ret;
+	
+	handle = Fcreate(pFilename, 0);
+	if (handle < 0)
+		return handle;
+	
+	ret = Fwrite(handle, size, base);
+	if (ret < 0)
+		return ret;
+	
+	ret = Fclose(handle);
+	return ret;
 }
+
 

@@ -2,6 +2,7 @@
 
 		public		_dspinit
 		public		_dspblit
+		public		_screenbase
 
 _dspinit:
 	;DSP lock
@@ -27,7 +28,7 @@ _dspinit:
 	; Calc screen address
 	move.l	#screen,d0
 	and.l	#$ffffff00,d0
-	move.l	d0,screenbase
+	move.l	d0,_screenbase
 	
 	; Set screen address and res
 	move.w  #VSETMODE_TRUCOLOR,-(sp)   ; Offset 12
@@ -45,7 +46,7 @@ _dspinit:
 _dspblit:
 
 loop:
-	move.l	screenbase,a0
+	move.l	_screenbase,a0
 	lea		$ffffA206.w,a1	            ;a1 = DSP host post
 	add.w   #$111,fake_src
 
@@ -120,8 +121,7 @@ fake_src:   dc.w    $000
 ;------------------------------------------------------------------------------
 	section	bss
 ;------------------------------------------------------------------------------
-screenbase	ds.l	1
+_screenbase	ds.l	1
                 
 			ds.b	256
 screen		ds.b	320*200
-
