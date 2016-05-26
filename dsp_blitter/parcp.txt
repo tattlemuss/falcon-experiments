@@ -1,2 +1,3 @@
-put bin/dspblit.tos
-exec -n dspblit.tos
+put dspblit.tos
+exec dspblit.tos
+
