@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <stdio.h>
 #include <mint/mintbind.h>
 
 extern int32_t dspinit();
@@ -15,7 +14,6 @@ int main(int argc, char** argv)
 	getchar();
 	
 	ret = Supexec(dspinit);
-	//printf("Init code: %x\n", ret);
 	
 	ret = Supexec(cpublit);
 	ret = save_file((void*)screenbase, 320*200*2, "CPU.DAT");
@@ -24,15 +22,13 @@ int main(int argc, char** argv)
 	ret = save_file((void*)screenbase, 320*200*2, "DSP.DAT");
 	getchar();
 	
-	//printf("Return code: %x\n", ret);
-	//getchar();
 	return 0;
 }
 
 int save_file(void* base, int32_t size, const char* pFilename)
 {
 	int16_t handle;
-	int16_t ret;
+	int32_t ret;
 	
 	handle = Fcreate(pFilename, 0);
 	if (handle < 0)
