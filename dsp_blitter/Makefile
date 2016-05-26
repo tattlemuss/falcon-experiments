@@ -1,3 +1,9 @@
+ifeq ($(OS),Windows_NT)
+HATARI_OPTIONS=-W
+else
+HATARI_OPTIONS=
+endif
+
 SRC_PATH=.
 OUT_DIR=./bin
 OUT_PATH=dspblit.tos
@@ -40,7 +46,7 @@ clean:
 
 .PHONY: hatari	
 hatari: all
-	hatari -W --machine falcon --dsp emu --blitter y --tos tos404.img dspblit.tos
+	hatari $(HATARI_OPTIONS) --machine falcon --dsp emu --blitter y --tos tos404.img dspblit.tos
 
 bin/main.obj :	bin/dsp.p56
 
