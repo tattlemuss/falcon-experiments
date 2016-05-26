@@ -1,7 +1,10 @@
         include    "hardware.i"
 
 		public		_dspinit
+        
+		public		_cpublit
 		public		_dspblit
+        
 		public		_screenbase
 
 _dspinit:
@@ -42,6 +45,24 @@ _dspinit:
 	bmi		fail
 	moveq	#0,d0
 	rts
+
+XCOUNT  equ     256
+YCOUNT  equ     128
+SCREENWIDTH     equ 320
+
+_cpublit:
+	move.l	_screenbase,a0
+	lea		$ffffA206.w,a1	            ;a1 = DSP host post
+	move.l	a0,a2
+    move.w	#YCOUNT-1,d0
+.yloop:
+    move.w	#XCOUNT-1,d1
+.xloop:
+	move.w	(a1),(a2)+
+	dbf     d1,.xloop
+	lea     (SCREENWIDTH*2)-(XCOUNT*2)(a2),a2
+	dbf     d0,.yloop
+    rts
 		
 _dspblit:
 
@@ -50,24 +71,8 @@ loop:
 	lea		$ffffA206.w,a1	            ;a1 = DSP host post
 	add.w   #$111,fake_src
 
-XCOUNT  equ     256
-YCOUNT  equ     128
-
-    if     1
-	move.l	a0,a2
-    move.w	#YCOUNT-1,d0
-.yloop:
-    move.w	#XCOUNT-1,d1
-.xloop:
-	move.w	(a1),(a2)+
-	dbf     d1,.xloop
-	lea     (320*2)-(XCOUNT*2)(a2),a2
-	dbf     d0,.yloop
-        
-	else
-        
     move.w	#2,BLT_DST_INC_X.w
-	move.w	#(320*2)-(XCOUNT*2)+2,BLT_DST_INC_Y.w
+	move.w	#(SCREENWIDTH*2)-(XCOUNT*2)+2,BLT_DST_INC_Y.w
 	move.l  a0,BLT_DST_ADDR_L.w        ;set destination
 
 	move.w	#0,BLT_SRC_INC_X.w
@@ -94,8 +99,6 @@ YCOUNT  equ     128
 .rs:
 	btst.b  d2,BLT_MISC_1.w
     bne.s	.rs
-
-    endif
 
 	cmp.b   #$39,$fffffc02.w
 	bne.s	loop

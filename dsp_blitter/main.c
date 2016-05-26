@@ -4,6 +4,7 @@
 
 extern int32_t dspinit();
 extern int32_t dspblit();
+extern int32_t cpublit();
 extern int32_t screenbase;		// Base screen address
 
 
@@ -16,13 +17,12 @@ int main(int argc, char** argv)
 	ret = Supexec(dspinit);
 	//printf("Init code: %x\n", ret);
 	
-	while (1)
-	{
-		ret = Supexec(dspblit);
-		
-		ret = save_file((void*)screenbase, 320*200*2, "SCREEN.DAT");
-		printf("Return code: %x\n", ret);
-	}
+	ret = Supexec(cpublit);
+	ret = save_file((void*)screenbase, 320*200*2, "CPU.DAT");
+	getchar();
+	ret = Supexec(dspblit);
+	ret = save_file((void*)screenbase, 320*200*2, "DSP.DAT");
+	getchar();
 	
 	//printf("Return code: %x\n", ret);
 	//getchar();
@@ -31,8 +31,6 @@ int main(int argc, char** argv)
 
 int save_file(void* base, int32_t size, const char* pFilename)
 {
-	printf("%p\n", base);
-	
 	int16_t handle;
 	int16_t ret;
 	
