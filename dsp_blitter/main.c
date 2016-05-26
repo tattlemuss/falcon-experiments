@@ -16,10 +16,10 @@ int main(int argc, char** argv)
 	ret = Supexec(dspinit);
 	
 	ret = Supexec(cpublit);
-	ret = save_file((void*)screenbase, 320*200*2, "CPU.DAT");
+	ret = save_file((void*)screenbase, 256*128*2, "CPU.DAT");
 	getchar();
 	ret = Supexec(dspblit);
-	ret = save_file((void*)screenbase, 320*200*2, "DSP.DAT");
+	ret = save_file((void*)screenbase, 256*128*2, "DSP.DAT");
 	getchar();
 	
 	return 0;

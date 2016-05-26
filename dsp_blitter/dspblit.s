@@ -41,8 +41,8 @@ _dspinit:
 	move.w  #5,-(sp)     ; Offset  0
 	trap    #14          ; Call XBIOS
 	lea     14(sp),sp    ; Correct stack
-	tst.w	d0
-	bmi		fail
+	;tst.w	d0
+	;bmi		fail
 	moveq	#0,d0
 	rts
 
@@ -127,4 +127,4 @@ fake_src:   dc.w    $000
 _screenbase	ds.l	1
                 
 			ds.b	256
-screen		ds.b	320*200
+screen		ds.b	320*240
