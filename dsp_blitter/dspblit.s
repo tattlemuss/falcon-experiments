@@ -69,7 +69,6 @@ _dspblit:
 loop:
 	move.l	_screenbase,a0
 	lea		$ffffA206.w,a1	            ;a1 = DSP host post
-	add.w   #$111,fake_src
 
     move.w	#2,BLT_DST_INC_X.w
 	move.w	#(SCREENWIDTH*2)-(XCOUNT*2)+2,BLT_DST_INC_Y.w
@@ -78,7 +77,6 @@ loop:
 	move.w	#0,BLT_SRC_INC_X.w
 	move.w	#0,BLT_SRC_INC_Y.w
 	move.l  a1,BLT_SRC_ADDR_L.w        ;SRC = blitter
-;	move.l  #fake_src,BLT_SRC_ADDR_L.w        ;SRC = blitter
 
 	move.b	#BLT_HOP_SRC, BLT_HOP.w         ;halftone isn't used
 	move.b	#BLT_OP_S, BLT_OP.w             ;operation = "source"
@@ -119,7 +117,6 @@ dsp_data_end:
 dsp_data_size	equ		(dsp_data_end-dsp_data)/3
 
             even
-fake_src:   dc.w    $000
 
 ;------------------------------------------------------------------------------
 	section	bss
